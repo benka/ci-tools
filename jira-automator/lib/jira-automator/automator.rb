@@ -1,6 +1,7 @@
 require "jira-automator/version"
 require "jira-automator/res/request"
 require "jira-automator/res/transition"
+require "jira-automator/res/issue"
 
 require "net/http"
 require "json"
@@ -39,7 +40,8 @@ module JiraAutomator
                         puts i["id"]
                         puts i["name"]
                         puts i["searchUrl"]
-                        get_issues(options[:user], options[:pwd], i["searchUrl"])
+                        i = Resorces::Issue.new(options[:user], options[:pwd])
+                        i.get_issues(i["searchUrl"])
                     end
                 }
             end
@@ -74,35 +76,5 @@ module JiraAutomator
 
             end
         end
-
-        def get_issues(user, pwd, searchUrl)
-
-            uri = URI(searchUrl)
-
-            r = Resources::Request.new(uri, user, pwd)
-            req=r.create_get_request_header
-
-            res = Net::HTTP.start(uri.hostname, 
-                :use_ssl => uri.scheme == 'https') { |http|
-                http.request(req)
-            }
-
-            if res.code != "200"
-                puts res.code
-                puts res.message
-            else 
-                result=JSON.parse(res.body)
-                result["issues"].each { |i| 
-                    puts i["id"]
-                    puts i["key"]
-                    puts i["self"]
-                    t = Resources::Transition.new(user, pwd)
-                    t.get_transitions(i["self"])
-                }
-            end
-        end
-
-
-
     end
 end
