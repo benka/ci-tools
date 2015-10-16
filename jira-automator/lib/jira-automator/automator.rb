@@ -40,8 +40,8 @@ module JiraAutomator
                         puts i["id"]
                         puts i["name"]
                         puts i["searchUrl"]
-                        i = Resources::Issue.new(options[:user], options[:pwd])
-                        i.get_issues(i["searchUrl"])
+                        iss = Resources::Issue.new(options[:user], options[:pwd])
+                        iss.get_issues(i["searchUrl"])
                     end
                 }
             end
