@@ -8,7 +8,7 @@ require "thor"
 
 module JiraAutomator
     
-    include Resoures
+    ##include Resoures
 
     class Automator < Thor
 
@@ -96,8 +96,8 @@ module JiraAutomator
                     puts i["id"]
                     puts i["key"]
                     puts i["self"]
-                    transition = Resources::Transition.new
-                    transition.get_transitions(user, pwd, i["self"])
+                    t = Resources::Transition.new(user, pwd)
+                    t.get_transitions(i["self"])
                 }
             end
         end

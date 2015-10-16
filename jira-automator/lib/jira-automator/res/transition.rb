@@ -1,14 +1,19 @@
 module JiraAutomator
     module Resources
 
-        class Transitions
+        class Transition
 
-            def get_transitions(user, pwd, searchUrl)
+            def initialize(user, pwd)
+                @user = user
+                @pwd = pwd
+            end
+
+            def get_transitions(searchUrl)
 
                 uri = "#{searchUrl}/transitions"
                 uri = URI(uri)
 
-                r = Resources::Request.new(uri, user, pwd)
+                r = Resources::Request.new(uri, @user, @pwd)
                 req=r.create_get_request_header
 
                 res = Net::HTTP.start(uri.hostname, 
@@ -24,14 +29,14 @@ module JiraAutomator
                     result["transitions"].each { |i| 
                         if i["name"] == "Release"
                             puts "key: #{i['key']}, id: #{i['id']}, transition: #{i['name']}"
-                            do_transition(user, pwd, searchUrl, i["id"])
+                            do_transition(searchUrl, i["id"])
                         end
                         
                     }
                 end
             end
 
-            def do_transition(user, pwd, searchUrl, transitionId)
+            def do_transition(searchUrl, transitionId)
 
                 uri = "#{searchUrl}/transitions"
                 uri = URI(uri)
@@ -50,7 +55,7 @@ module JiraAutomator
                 }
                 puts post.to_json
 
-                r = Resources::Request.new(uri, user, pwd)
+                r = Resources::Request.new(uri, @user, @pwd)
                 req = r.create_post_request_header(post.to_json)
 
                 res = Net::HTTP.start(uri.hostname, 
