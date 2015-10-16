@@ -1,6 +1,6 @@
 require "jira-automator/version"
 require "jira-automator/res/request"
-require "jira-automator/res/transitions"
+require "jira-automator/res/transition"
 
 require "net/http"
 require "json"
@@ -96,8 +96,8 @@ module JiraAutomator
                     puts i["id"]
                     puts i["key"]
                     puts i["self"]
-                    transition = Resources::Tranition.new
-                    #get_transitions(user, pwd, i["self"])
+                    transition = Resources::Transition.new
+                    transition.get_transitions(user, pwd, i["self"])
                 }
             end
         end

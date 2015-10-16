@@ -60,5 +60,4 @@ module JiraAutomator
             end
         end
     end
-
 end
