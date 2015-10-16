@@ -4,18 +4,28 @@ module JiraAutomator
         class Request
 
             def initialize(uri, user, pwd)
-                puts "WTH"
                 @uri = uri
                 @user = user
                 @pwd = pwd
             end
 
-            def create_request_header
+            def create_get_request_header
                 req = Net::HTTP::Get.new(@uri)
+                req.basic_auth @user, @pwd
                 req.content_type = 'application/json'
                 req.add_field 'X-Atlassian-Token' ,'nocheck'
-                req.basic_auth @user, @pwd
+                return req
             end
+
+            def create_post_request_header(post)
+                req = Net::HTTP::Post.new(@uri)
+                req.basic_auth @user, @pwd
+                req.content_type = 'application/json'
+                req.add_field 'X-Atlassian-Token' ,'nocheck'
+                #req.set_form_data(post)
+                req.body=post
+                return req
+            end            
         end
     end
 end

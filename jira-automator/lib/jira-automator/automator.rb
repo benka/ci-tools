@@ -9,28 +9,19 @@ require "jira-automator/res/request"
 module JiraAutomator
     
     include Resources
-    class Automator < Thor
 
+    class Automator < Thor
 
         desc "get-filters", "gets filters from jira"
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
         option :filter_name, :type => :string, :required => true
         def get_filters
-            #puts options
-            user=options[:user]
-            pwd=options[:pwd]
             filter=options[:filter_name]
-
             uri = URI('https://thesib.atlassian.net/rest/api/2/filter/favourite')
 
-           # r = Resources::Request.new(uri, user, pwd)
-            #req=r.create_request_header
-            #req = Net::HTTP::Get.new(uri)
-            
-            #req.basic_auth user, pwd
-            #req.content_type = 'application/json'
-            #req.add_field 'X-Atlassian-Token' ,'nocheck'
+            r = Resources::Request.new(uri, options[:user], options[:pwd])
+            req=r.create_get_request_header
 
             res = Net::HTTP.start(uri.hostname, 
                 :use_ssl => uri.scheme == 'https') { |http|
@@ -40,17 +31,15 @@ module JiraAutomator
             if res.code != "200"
                 puts res.code
                 puts res.message
-                #puts res.body
             else 
                 result=JSON.parse(res.body)
 
                 result.each { |i|
-                    #puts i["name"]
                     if filter == i["name"]
                         puts i["id"]
                         puts i["name"]
                         puts i["searchUrl"]
-
+                        get_issues(options[:user], options[:pwd], i["searchUrl"])
                     end
                 }
             end
@@ -61,19 +50,12 @@ module JiraAutomator
         option :pwd, :type => :string, :required => true
         option :filter, :type => :string, :required => true
         def get_filter
-            #puts options
-            user=options[:user]
-            pwd=options[:pwd]
             filter=options[:filter]
-
             uriString = "https://thesib.atlassian.net/rest/api/2/filter/#{filter}"
             uri = URI(uriString)
 
-            req = Net::HTTP::Get.new(uri)
-            
-            req.basic_auth user, pwd
-            req.content_type = 'application/json'
-            req.add_field 'X-Atlassian-Token' ,'nocheck'
+            r = Resources::Request.new(uri, options[:user], options[:pwd])
+            req=r.create_get_request_header
 
             res = Net::HTTP.start(uri.hostname, 
                 :use_ssl => uri.scheme == 'https') { |http|
@@ -83,7 +65,6 @@ module JiraAutomator
             if res.code != "200"
                 puts res.code
                 puts res.message
-                #puts res.body
             else 
                 result=JSON.parse(res.body)
 
@@ -94,15 +75,12 @@ module JiraAutomator
             end
         end
 
-        def get_filter(user, pwd, searchUrl)
+        def get_issues(user, pwd, searchUrl)
 
             uri = URI(searchUrl)
 
-            req = Net::HTTP::Get.new(uri)
-            
-            req.basic_auth user, pwd
-            req.content_type = 'application/json'
-            req.add_field 'X-Atlassian-Token' ,'nocheck'
+            r = Resources::Request.new(uri, user, pwd)
+            req=r.create_get_request_header
 
             res = Net::HTTP.start(uri.hostname, 
                 :use_ssl => uri.scheme == 'https') { |http|
@@ -112,17 +90,84 @@ module JiraAutomator
             if res.code != "200"
                 puts res.code
                 puts res.message
-                #puts res.body
             else 
                 result=JSON.parse(res.body)
-
-                puts result["id"]
-                puts result["name"]
-                puts result["searchUrl"]
-
+                result["issues"].each { |i| 
+                    puts i["id"]
+                    puts i["key"]
+                    puts i["self"]
+                    get_transitions(user, pwd, i["self"])
+                }
             end
         end
 
+        def get_transitions(user, pwd, searchUrl)
+
+            uri = "#{searchUrl}/transitions"
+            uri = URI(uri)
+
+            r = Resources::Request.new(uri, user, pwd)
+            req=r.create_get_request_header
+
+            res = Net::HTTP.start(uri.hostname, 
+                :use_ssl => uri.scheme == 'https') { |http|
+                http.request(req)
+            }
+
+            if res.code != "200"
+                puts res.code
+                puts res.message
+            else 
+                result=JSON.parse(res.body)
+                result["transitions"].each { |i| 
+                    if i["name"] == "Release"
+                        puts "key: #{i['key']}, id: #{i['id']}, transition: #{i['name']}"
+                        do_transition(user, pwd, searchUrl, i["id"])
+                    end
+                    
+                }
+            end
+        end
+
+        def do_transition(user, pwd, searchUrl, transitionId)
+
+            uri = "#{searchUrl}/transitions"
+            uri = URI(uri)
+            post = {
+                "update" => 
+                    {"comment" => [
+                        {
+                            "add" => {
+                                "body" => "This is released, settings status to DONE by Bamboo"
+                            }
+                        }
+                    ]},
+                "transition" => {
+                    "id" => transitionId
+                }
+            }
+            puts post.to_json
+
+            r = Resources::Request.new(uri, user, pwd)
+            req = r.create_post_request_header(post.to_json)
+
+            res = Net::HTTP.start(uri.hostname, 
+                :use_ssl => uri.scheme == 'https') { |http|
+                http.request(req)
+            }
+
+puts res
+            #if res.code != "200"
+            #    puts res.code
+            #    puts res.message
+            #else 
+            #    result=JSON.parse(res.body)
+            #    puts result
+            #        puts i["id"]
+            #        puts i["name"]
+
+            #end
+        end
 
     end
 end
