@@ -10,7 +10,7 @@ module JiraAutomator
         def get_filters
            uri = URI('https://thesib.atlassian.net/rest/api/2/filter/favourite')
            req = Net::HTTP::Get.new(uri)
-           req.basic_auth 'YW5kcmV3OkJhODEwNjE4'
+           req.basic_auth 'andrew' 'Ba810618'
            res = Net::HTTP.get_response(uri)
            puts res.code
            puts res.message
