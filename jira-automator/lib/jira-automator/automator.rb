@@ -3,10 +3,14 @@ require "net/http"
 require "json"
 require "thor"
 
-Dir[File.dirname(__FILE__) + '/res/*.rb'].each {|file| require file }
+require "jira-automator/res/request"
+#Dir[File.dirname(__FILE__) + '/res/*.rb'].each {|file| require file }
 
 module JiraAutomator
+    
+    include Resources
     class Automator < Thor
+
 
         desc "get-filters", "gets filters from jira"
         option :user, :type => :string, :required => true
@@ -20,7 +24,7 @@ module JiraAutomator
 
             uri = URI('https://thesib.atlassian.net/rest/api/2/filter/favourite')
 
-            r = Resources::Request.new(uri, user, pwd)
+           # r = Resources::Request.new(uri, user, pwd)
             #req=r.create_request_header
             #req = Net::HTTP::Get.new(uri)
             
