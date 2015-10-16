@@ -1,4 +1,4 @@
-require "jira/automator/version"
+require "jira-automator/version"
 require "net/http"
 require "thor"
 
