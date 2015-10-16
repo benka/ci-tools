@@ -22,7 +22,6 @@ module JiraAutomator
                 req.basic_auth @user, @pwd
                 req.content_type = 'application/json'
                 req.add_field 'X-Atlassian-Token' ,'nocheck'
-                #req.set_form_data(post)
                 req.body=post
                 return req
             end            

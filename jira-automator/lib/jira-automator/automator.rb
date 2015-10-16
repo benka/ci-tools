@@ -96,8 +96,8 @@ module JiraAutomator
                     puts i["id"]
                     puts i["key"]
                     puts i["self"]
-                    transition = Resources::Tran
-                    get_transitions(user, pwd, i["self"])
+                    transition = Resources::Tranition.new
+                    #get_transitions(user, pwd, i["self"])
                 }
             end
         end
