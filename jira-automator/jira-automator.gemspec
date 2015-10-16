@@ -5,7 +5,7 @@ require 'jira-automator/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "jira-automator"
-  spec.version       = Jira::Automator::VERSION
+  spec.version       = JiraAutomator::VERSION
   spec.authors       = ["benka"]
   spec.email         = ["andrew.benkoczi@gmail.com"]
 
