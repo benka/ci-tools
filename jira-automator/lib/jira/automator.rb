@@ -1,12 +1,14 @@
 require "jira/automator/version"
 require "net/http"
+require "thor"
 
 
 module Jira
-    class Automator
+    class Automator < Thor
 
-        def run
-
+        desc "get-filters", "gets filters from jira"
+        def get_filters
+            puts "get filters"
            ##uri = URI('https://thesib.atlassian.net/rest/api/2/filter/favourite')
             #res = Net::HTTP.get_response(uri)
            # puts res.code
