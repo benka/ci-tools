@@ -1,10 +1,10 @@
 require "jira-automator/version"
+require "jira-automator/res/request"
+require "jira-automator/res/transitions"
+
 require "net/http"
 require "json"
 require "thor"
-
-require "jira-automator/res/request"
-require "jira-automator/res/transitions"
 
 module JiraAutomator
     
