@@ -9,9 +9,16 @@ module JiraAutomator
             end
 
             def get_issues(searchUrl)
+                list_issues(searchUrl, false, false, false)
 
+            end
+
+            def transition_issues(searchUrl, release_version, transition_id)
+                list_issues(searchUrl, true, release_version, transition_id)
+            end
+
+            def list_issues(searchUrl, do_transition, release_version, transition_id)
                 uri = URI(searchUrl)
-
                 r = Resources::Request.new(uri, @user, @pwd)
                 req=r.create_get_request_header
 
@@ -25,12 +32,14 @@ module JiraAutomator
                     puts res.message
                 else 
                     result=JSON.parse(res.body)
+                    puts "Number of issues: #{result["issues"].count}"                    
                     result["issues"].each { |i| 
-                        puts i["id"]
-                        puts i["key"]
-                        puts i["self"]
-                        t = Resources::Transition.new(@user, @pwd)
-                        t.get_transitions(i["self"])
+                        puts "Issue KEY: #{i["key"]},  ID: #{i["id"]}"
+                        #puts "i["self"]
+                        if do_transition
+                            t = Resources::Transition.new(@user, @pwd, release_version)
+                            t.get_transitions(i["self"])
+                        end
                     }
                 end
             end
