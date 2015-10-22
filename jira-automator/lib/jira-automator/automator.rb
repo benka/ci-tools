@@ -10,6 +10,8 @@ require "thor"
 module JiraAutomator
     
     ##include Resoures
+    puts "JIRA issue status automator"
+    puts "Version #{VERSION}"
 
     class Automator < Thor
 
