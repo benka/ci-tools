@@ -46,7 +46,7 @@ module JiraAutomator
                         {"comment" => [
                             {
                                 "add" => {
-                                    "body" => "#{@rv} >>> This is released in #{@release_version}, setting status to RELEASE by Bamboo"
+                                    "body" => "This is released in #{@release_version}, setting status to RELEASE by Bamboo"
                                 }
                             }
                         ]},
@@ -59,10 +59,10 @@ module JiraAutomator
                 r = Resources::Request.new(uri, @user, @pwd)
                 req = r.create_post_request_header(post.to_json)
 
-                #res = Net::HTTP.start(uri.hostname, 
-                #    :use_ssl => uri.scheme == 'https') { |http|
-                #    http.request(req)
-                #}
+                res = Net::HTTP.start(uri.hostname, 
+                    :use_ssl => uri.scheme == 'https') { |http|
+                    http.request(req)
+                }
             end
         end
     end
