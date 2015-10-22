@@ -31,7 +31,7 @@ module JiraAutomator
                     puts res.code
                     puts res.message
                 else 
-                    result=JSON.parse(res.body)
+                    #result=JSON.parse(res.body)
                     puts "Number of issues: #{result["issues"].count}"                    
                     result["issues"].each { |i| 
                         puts "Issue KEY: #{i["key"]},  ID: #{i["id"]}"

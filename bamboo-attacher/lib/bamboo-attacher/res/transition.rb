@@ -26,7 +26,7 @@ module BambooAttacher
                     puts res.code
                     puts res.message
                 else 
-                    result=JSON.parse(res.body)
+                    #result=JSON.parse(res.body)
                     result["transitions"].each { |i| 
                         if i["name"] == "Release"
                             puts "key: #{i['key']}, id: #{i['id']}, transition: #{i['name']}"
@@ -54,10 +54,10 @@ module BambooAttacher
                         "id" => transitionId
                     }
                 }
-                puts post.to_json
+                #puts post.to_json
 
                 r = Resources::Request.new(uri, @user, @pwd)
-                req = r.create_post_request_header(post.to_json)
+                #req = r.create_post_request_header(post.to_json)
 
                 res = Net::HTTP.start(uri.hostname, 
                     :use_ssl => uri.scheme == 'https') { |http|
