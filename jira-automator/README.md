@@ -1,38 +1,71 @@
 # Jira::Automator
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/jira/automator`. To experiment with that code, run `bin/console` for an interactive prompt.
+Jira Automator is a small gem that simplifies calling Jira REST Api to set specific cards' status.
 
-TODO: Delete this and the text above, and describe your gem
+The main reason for this gem is to support Jira Card/Issue status transition from Bamboo after a successful build & deployment.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'jira-automator'
+cd jira-automator
+gem install bundler
+bundle install
+rake build 
+gem install pkg/jira-automator-x.x.x.gem
 ```
 
 And then execute:
 
-    $ bundle
+    $ automator
 
-Or install it yourself as:
+## Commands
 
-    $ gem install jira-automator
+    automator get-filterbyID --filter=FILTER --pwd=password --user=USER --domain=DOMAIN
+    # gets a specific filter by ID
+    # options
+     --filter=FILTER # (mandatory) where FILTER is the filter ID
+     --pwd=PWD       # (mandatory) password
+     --user=USER     # (mandatory) user
+     --domain=DOMAIN # (mandatory) domain name for the JIRA server
+     
+    automator get-filters --pwd=PWD --user=USER --domain=DOMAIN
+    # gets favourite filters for the user
+    # options
+     --pwd=PWD       # (mandatory) password
+     --user=USER     # (mandatory) user
+     --domain=DOMAIN # (mandatory) domain name for the JIRA server
+     
+    automator get-issues --filter-name=FILTER_NAME --pwd=PWD --user=USER --domain=DOMAIN
+    # gets issues from a specific filter (by filter name)
+    # options
+     --filter-name=FILTER_NAME # (mandatory) this is the name of the filter
+     --pwd=PWD       # (mandatory) password
+     --user=USER     # (mandatory) user
+     --domain=DOMAIN # (mandatory) domain name for the JIRA server
+     
+    automator help [COMMAND]                                                     
+    # Describe available commands
+     
+    automator transition-issues --filter-name=FILTER_NAME --pwd=PWD --user=USER --domain=DOMAIN  
+    # set status of all issues related to a specific filter to "release"
+    # this should be run after a successful deployment
+    # options     
+     --filter-name=FILTER_NAME # (mandatory) this is the name of the filter
+     --pwd=PWD       # (mandatory) password
+     --user=USER     # (mandatory) user
+     --domain=DOMAIN # (mandatory) domain name for the JIRA server    
+    
 
 ## Usage
 
-TODO: Write usage instructions here
+    automator transition-issues --filter-name=FILTER_NAME --pwd=PWD --user=USER --domain=DOMAIN  
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/jira-automator.
+Bug reports and pull requests are welcome on GitHub at https://github.com/benka/ci-tools/jira-automator
 
 
 ## License
