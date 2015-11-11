@@ -21,7 +21,8 @@ module JiraAutomator
         option :domain, :type => :string, :required => true
         def get_filters
             domain=options[:domain]
-            uri = URI('https://#{domain}/rest/api/2/filter/favourite')
+            uriString = "https://#{domain}/rest/api/2/filter/favourite"
+            uri = URI(uriString)
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
             req=r.create_get_request_header
@@ -83,7 +84,8 @@ module JiraAutomator
         def get_issues
             filter=options[:filter_name]
             domain=options[:domain]
-            uri = URI('https://#{domain}/rest/api/2/filter/favourite')
+            uriString = "https://#{domain}/rest/api/2/filter/favourite"
+            uri = URI(uriString)
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
             req=r.create_get_request_header
@@ -121,7 +123,8 @@ module JiraAutomator
             filter=options[:filter_name]
             domain=options[:domain]
             @rv=filter
-            uri = URI('https://#{domain}/rest/api/2/filter/favourite')
+            uriString = "https://#{domain}/rest/api/2/filter/favourite"
+            uri = URI(uriString)
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
             req=r.create_get_request_header

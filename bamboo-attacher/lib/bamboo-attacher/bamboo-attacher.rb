@@ -17,8 +17,11 @@ module BambooAttacher
         desc "get-plans", "gets build plans"
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
+        option :domain, :type => :string, :required => true
         def get_plans
-            uri = URI('https://thesib.atlassian.net/builds/rest/api/latest/plan')
+            domain=options[:domain]
+            uriString = "https://#{domain}/builds/rest/api/latest/plan"
+            uri = URI(uriString)
             puts "URI: #{uri}"
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
@@ -56,8 +59,11 @@ module BambooAttacher
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
         option :plan_key, :type => :string, :required => true
+        option :domain, :type => :string, :required => true
         def get_plan_bykey
-            uri = URI("https://thesib.atlassian.net/builds/rest/api/latest/plan/#{options[:plan_key]}/")
+            domain=options[:domain]
+            uriString = "https://#{domain}/builds/rest/api/latest/plan/#{options[:plan_key]}/"
+            uri = URI(uriString)
             puts "URI: #{uri}"
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
@@ -85,11 +91,14 @@ module BambooAttacher
         option :build_key, :type => :string, :required => true
         option :build_number, :type => :string, :required => false, :default => false
         option :all_stages, :type => :boolean, :required => false, :default => false
+        option :domain, :type => :string, :required => true
         def run_build
+            domain=options[:domain]
             key = options[:build_key]
             key = "#{key}-#{options[:build_number]}" if options[:build_number]
             key = "#{key}?executeAllStages=#{options[:all_stages]}" if options[:all_stages]
-            uri = URI("https://thesib.atlassian.net/builds/rest/api/latest/queue/#{key}")
+            uriString = "https://#{domain}/builds/rest/api/latest/queue/#{key}/"
+            uri = URI(uriString)
             puts "URI: #{uri}"
 
             type = "post"
@@ -118,13 +127,16 @@ module BambooAttacher
         option :build_key, :type => :string, :required => true
         option :stage, :type => :string, :required => false, :default => false
         option :build_number, :type => :string, :required => false, :default => false
+        option :domain, :type => :string, :required => true
         def run_build_stage
+            domain=options[:domain]
             key = options[:build_key]
 
             key = "#{key}-#{options[:build_number]}" if options[:build_number]
             key = "#{key}?stage=#{options[:stage]}" if options[:stage]
 
-            uri = URI("https://thesib.atlassian.net/builds/rest/api/latest/queue/#{key}")
+            uriString = "https://#{domain}/builds/rest/api/latest/queue/#{key}/"
+            uri = URI(uriString)
             puts "URI: #{uri}"
 
             type = "post"
