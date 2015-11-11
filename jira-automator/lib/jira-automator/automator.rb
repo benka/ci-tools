@@ -18,8 +18,10 @@ module JiraAutomator
         desc "get-filters", "gets favourite filters from jira"
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
+        option :domain, :type => :string, :required => true
         def get_filters
-            uri = URI('https://thesib.atlassian.net/rest/api/2/filter/favourite')
+            domain=options[:domain]
+            uri = URI('https://#{domain}/rest/api/2/filter/favourite')
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
             req=r.create_get_request_header
@@ -46,10 +48,12 @@ module JiraAutomator
         desc "get-filterbyID", "gets a specific filter from jira by ID"
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
-        option :filter, :type => :string, :required => true
+        option :filter_id, :type => :string, :required => true
+        option :domain, :type => :string, :required => true
         def get_filterbyID
             filter=options[:filter]
-            uriString = "https://thesib.atlassian.net/rest/api/2/filter/#{filter}"
+            domain=options[:domain]
+            uriString = "https://#{domain}/rest/api/2/filter/#{filter}"
             uri = URI(uriString)
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
@@ -75,9 +79,11 @@ module JiraAutomator
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
         option :filter_name, :type => :string, :required => true
+        option :domain, :type => :string, :required => true
         def get_issues
             filter=options[:filter_name]
-            uri = URI('https://thesib.atlassian.net/rest/api/2/filter/favourite')
+            domain=options[:domain]
+            uri = URI('https://#{domain}/rest/api/2/filter/favourite')
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
             req=r.create_get_request_header
@@ -110,10 +116,12 @@ module JiraAutomator
         option :pwd, :type => :string, :required => true
         option :filter_name, :type => :string, :required => true
         option :transition_id, :type => :string, :required => false
+        option :domain, :type => :string, :required => true
         def transition_issues
             filter=options[:filter_name]
+            domain=options[:domain]
             @rv=filter
-            uri = URI('https://thesib.atlassian.net/rest/api/2/filter/favourite')
+            uri = URI('https://#{domain}/rest/api/2/filter/favourite')
 
             r = Resources::Request.new(uri, options[:user], options[:pwd])
             req=r.create_get_request_header
