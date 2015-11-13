@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require 'bamboo-amimanager/bamboo-amimanager'
+BambooAmiManager::AmiManager.start

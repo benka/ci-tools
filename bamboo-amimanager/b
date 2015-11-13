@@ -1,0 +1,4 @@
+clear
+bundle install
+rake build
+gem install pkg/bamboo-amimanager-0.0.1.gem
