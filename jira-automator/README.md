@@ -6,8 +6,6 @@ The main reason for this gem is to support Jira Card/Issue status transition fro
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
 ```ruby
 cd jira-automator
 gem install bundler
