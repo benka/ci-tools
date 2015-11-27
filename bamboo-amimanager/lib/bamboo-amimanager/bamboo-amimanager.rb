@@ -2,7 +2,6 @@ require "bamboo-amimanager/version"
 require "bamboo-amimanager/res/request"
 
 require "net/http"
-require "xmlsimple"
 require "json"
 require "thor"
 
@@ -18,7 +17,7 @@ module BambooAmiManager
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
         option :domain, :type => :string, :required => true
-        def get_plans
+        def get_configurations
             domain=options[:domain]
             uriString = "https://#{domain}/builds/rest/api/latest/elasticConfiguration"
             uri = URI(uriString)
@@ -34,35 +33,28 @@ module BambooAmiManager
             }
 
             if res.code != "200"
+                puts "---ERROR---"
                 puts res.code
                 puts res.message
             else 
-                puts res.body
-                #result = XmlSimple.xml_in res.body
-                #puts result.keys
-                #plans = result["plans"]
-                #puts "PLANS: #{plans}"
-                #plan = plans[0]["plan"]
-                #plan.each { |i| 
-                #    puts "Shortkey: #{i["shortKey"]}, Key: #{i["key"]}"
-                #    puts "PlanKey: #{i["planKey"]}"
-                #    puts "Shortname: #{i["shortName"]}"
-                #    puts "Name: #{i["name"]}"
-                #    puts "Link: #{i["link"]}"
-                #    puts i
-                #    puts "-------------------------------"
-                #}
+                #puts res.body
+                result=JSON.parse(res.body)
+
+                result.each { |i|
+                    puts i
+                    puts "-------------------------------"
+                }
             end
         end
 
-        desc "get-plan_bykey", "gets build plans from a specific project"
+        desc "get-configuration-by-id", "get an elastic image configuration by id"
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
-        option :plan_key, :type => :string, :required => true
+        option :image_id, :type => :string, :required => true
         option :domain, :type => :string, :required => true
-        def get_plan_bykey
+        def get_configuration_by_id
             domain=options[:domain]
-            uriString = "https://#{domain}/builds/rest/api/latest/plan/#{options[:plan_key]}/"
+            uriString = "https://#{domain}/builds/rest/api/latest/elasticConfiguration/#{options[:image_id]}"
             uri = URI(uriString)
             puts "URI: #{uri}"
 
@@ -80,32 +72,24 @@ module BambooAmiManager
                 puts res.message
             else 
                 puts res.body
-                result = XmlSimple.xml_in res.body
-                puts result
             end
         end
 
-        desc "run-build", "runs a specific build plan"
+        desc "get-configurationid-by-name", "get an elastic image configuration by id"
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
-        option :build_key, :type => :string, :required => true
-        option :build_number, :type => :string, :required => false, :default => false
-        option :all_stages, :type => :boolean, :required => false, :default => false
+        option :image_name, :type => :string, :required => true
         option :domain, :type => :string, :required => true
-        def run_build
+        def get_configurationid_by_name
             domain=options[:domain]
-            key = options[:build_key]
-            key = "#{key}-#{options[:build_number]}" if options[:build_number]
-            key = "#{key}?executeAllStages=#{options[:all_stages]}" if options[:all_stages]
-            uriString = "https://#{domain}/builds/rest/api/latest/queue/#{key}/"
+            image_name=URI.escape(options[:image_name])
+
+            uriString = "https://#{domain}/builds/rest/api/latest/elasticConfiguration/configuration-name/#{image_name}"
             uri = URI(uriString)
             puts "URI: #{uri}"
 
-            type = "post"
-            type = "put" if options[:build_number]
-
             r = Resources::Request.new(uri, options[:user], options[:pwd])
-            req = r.create_request_header(type, false)
+            req=r.create_get_request_header
 
             res = Net::HTTP.start(uri.hostname,
                 :use_ssl => uri.scheme == 'https'
@@ -118,32 +102,26 @@ module BambooAmiManager
                 puts res.message
             else 
                 puts res.body
+                result=JSON.parse(res.body)
+                puts result["imageId"]
             end
         end
 
-        desc "run-build-stage", "runs a specific stage in a specific build plan"
+        desc "set-configurationid-by-name", "get an elastic image configuration by id"
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
-        option :build_key, :type => :string, :required => true
-        option :stage, :type => :string, :required => false, :default => false
-        option :build_number, :type => :string, :required => false, :default => false
+        option :image_name, :type => :string, :required => true
         option :domain, :type => :string, :required => true
-        def run_build_stage
+        def get_configurationid_by_name
             domain=options[:domain]
-            key = options[:build_key]
+            image_name=URI.escape(options[:image_name])
 
-            key = "#{key}-#{options[:build_number]}" if options[:build_number]
-            key = "#{key}?stage=#{options[:stage]}" if options[:stage]
-
-            uriString = "https://#{domain}/builds/rest/api/latest/queue/#{key}/"
+            uriString = "https://#{domain}/builds/rest/api/latest/elasticConfiguration/configuration-name/#{image_name}"
             uri = URI(uriString)
             puts "URI: #{uri}"
 
-            type = "post"
-            type = "put" if options[:build_number]
-
             r = Resources::Request.new(uri, options[:user], options[:pwd])
-            req = r.create_request_header(type, false)
+            req=r.create_get_request_header
 
             res = Net::HTTP.start(uri.hostname,
                 :use_ssl => uri.scheme == 'https'
@@ -156,7 +134,10 @@ module BambooAmiManager
                 puts res.message
             else 
                 puts res.body
+                result=JSON.parse(res.body)
+                puts result["configurationId"]
             end
         end
+
     end
 end

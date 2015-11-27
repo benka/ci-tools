@@ -52,7 +52,7 @@ module JiraAutomator
         option :filter_id, :type => :string, :required => true
         option :domain, :type => :string, :required => true
         def get_filterbyID
-            filter=options[:filter]
+            filter=options[:filter_id]
             domain=options[:domain]
             uriString = "https://#{domain}/rest/api/2/filter/#{filter}"
             uri = URI(uriString)
@@ -117,7 +117,7 @@ module JiraAutomator
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
         option :filter_name, :type => :string, :required => true
-        option :transition_id, :type => :string, :required => false
+        option :transition, :type => :string, :required => false
         option :domain, :type => :string, :required => true
         def transition_issues
             filter=options[:filter_name]
@@ -146,7 +146,7 @@ module JiraAutomator
                         puts "Filter URL: #{i["searchUrl"]}"
                         puts "-------------------------------"
                         issue = Resources::Issue.new(options[:user], options[:pwd])
-                        issue.transition_issues(i["searchUrl"], filter, options[:transition_id])
+                        issue.transition_issues(i["searchUrl"], filter, options[:transition])
                     end
                 }
             end

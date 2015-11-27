@@ -9,7 +9,7 @@ module JiraAutomator
                 @release_version = release_version
             end
 
-            def get_transitions(searchUrl)
+            def get_transitions(searchUrl, transition)
 
                 uri = "#{searchUrl}/transitions"
                 uri = URI(uri)
@@ -27,8 +27,10 @@ module JiraAutomator
                     puts res.message
                 else 
                     result=JSON.parse(res.body)
+                    #puts result["transitions"]
                     result["transitions"].each { |i| 
-                        if i["name"] == "Release"
+                        #puts "#{i["name"].downcase} vs #{transition.downcase}"
+                        if i["name"].downcase == transition.downcase
                             puts "key: #{i['key']}, id: #{i['id']}, transition: #{i['name']}"
                             do_transition(searchUrl, i["id"])
                         end
