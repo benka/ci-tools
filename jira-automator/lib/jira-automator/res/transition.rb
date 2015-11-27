@@ -32,14 +32,19 @@ module JiraAutomator
                         #puts "#{i["name"].downcase} vs #{transition.downcase}"
                         if i["name"].downcase == transition.downcase
                             puts "key: #{i['key']}, id: #{i['id']}, transition: #{i['name']}"
-                            do_transition(searchUrl, i["id"])
+                            do_transition(searchUrl, i["id"], transition)
                         end
                         
                     }
                 end
             end
 
-            def do_transition(searchUrl, transitionId)
+            def do_transition(searchUrl, transitionId, transition)
+
+                action = "released"
+                if transition.downcase == "deploy"
+                    action = "deployed on production"
+                end
 
                 uri = "#{searchUrl}/transitions"
                 uri = URI(uri)
@@ -48,7 +53,7 @@ module JiraAutomator
                         {"comment" => [
                             {
                                 "add" => {
-                                    "body" => "This is released in #{@release_version}, setting status to RELEASE by Bamboo"
+                                    "body" => "This is #{action} in #{@release_version}, setting status to #{transition.upcase} by Bamboo"
                                 }
                             }
                         ]},
