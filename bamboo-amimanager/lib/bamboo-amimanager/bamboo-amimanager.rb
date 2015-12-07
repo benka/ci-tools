@@ -71,7 +71,11 @@ module BambooAmiManager
                 puts res.code
                 puts res.message
             else 
-                puts res.body
+                #puts res.body
+                result=JSON.parse(res.body)
+                puts "Image name: #{result["configurationName"]}"
+                puts "AMI ID: #{result["imageId"]}"
+                puts "Image configuration id: #{result["configurationId"]}"
             end
         end
 
@@ -101,9 +105,11 @@ module BambooAmiManager
                 puts res.code
                 puts res.message
             else 
-                puts res.body
+                #puts res.body
                 result=JSON.parse(res.body)
-                puts result["imageId"]
+                puts "Image name: #{result["configurationName"]}"
+                puts "AMI ID: #{result["imageId"]}"
+                puts "Image configuration id: #{result["configurationId"]}"
             end
         end
 
@@ -111,8 +117,9 @@ module BambooAmiManager
         option :user, :type => :string, :required => true
         option :pwd, :type => :string, :required => true
         option :image_name, :type => :string, :required => true
+        option :image_id, :type => :string, :required => true
         option :domain, :type => :string, :required => true
-        def get_configurationid_by_name
+        def set_configurationid_by_name
             domain=options[:domain]
             image_name=URI.escape(options[:image_name])
 
@@ -134,10 +141,38 @@ module BambooAmiManager
                 puts res.message
             else 
                 puts res.body
+
                 result=JSON.parse(res.body)
-                puts result["configurationId"]
+                puts "Image name: #{result["configurationName"]}"
+                puts "AMI ID: #{result["imageId"]}"
+                puts "Image configuration id: #{result["configurationId"]}"
+
+                uriStringSet = "https://#{domain}/builds/rest/api/latest/elasticConfiguration/image-id/#{result["imageId"]}?newImageId=#{options[:image_id]}"
+                uriSet = URI(uriStringSet)
+                puts "URI: #{uriSet}"
+
+                q = Resources::Request.new(uriSet, options[:user], options[:pwd])
+                reqSet=q.create_request_header("put", false)
+
+                resSet = Net::HTTP.start(uriSet.hostname,
+                    :use_ssl => uriSet.scheme == 'https'
+                ) { |http|
+                    http.request(reqSet)
+                }
+                if resSet.code != "200"
+                    puts resSet.code
+                    puts resSet.message
+                else 
+                    puts resSet.body
+                end
             end
         end
 
+        desc "test", "test"
+        option :user, :type => :string, :required => true
+        def test
+            puts "TEST: #{options[:user]}"
+
+        end
     end
 end

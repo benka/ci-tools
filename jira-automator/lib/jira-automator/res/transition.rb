@@ -61,7 +61,7 @@ module JiraAutomator
                         "id" => transitionId
                     }
                 }
-                puts post.to_json
+                #puts post.to_json
 
                 r = Resources::Request.new(uri, @user, @pwd)
                 req = r.create_post_request_header(post.to_json)

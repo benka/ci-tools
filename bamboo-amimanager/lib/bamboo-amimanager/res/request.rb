@@ -33,11 +33,12 @@ module BambooAmiManager
             end
 
             def create_put_request_header(post)
-                #puts "Creating PUT header"
+                puts "Creating PUT header"
                 req = Net::HTTP::Put.new(@uri)
                 req.basic_auth @user, @pwd
                 req.content_type = 'application/json'
-                req.body = post if post
+                req.add_field 'X-Atlassian-Token' ,'nocheck'
+                #req.body = "test" #post if post
                 return req
             end 
         end
