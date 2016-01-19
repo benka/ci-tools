@@ -3,10 +3,9 @@ module JiraAutomator
 
         class Transition
 
-            def initialize(user, pwd, release_version)
+            def initialize(user, pwd)
                 @user = user
                 @pwd = pwd
-                @release_version = release_version
             end
 
             def get_transitions(searchUrl, transition)
@@ -32,36 +31,22 @@ module JiraAutomator
                         #puts "#{i["name"].downcase} vs #{transition.downcase}"
                         if i["name"].downcase == transition.downcase
                             puts "key: #{i['key']}, id: #{i['id']}, transition: #{i['name']}"
-                            do_transition(searchUrl, i["id"], transition)
+                            do_transition(searchUrl, i["id"])
                         end
                         
                     }
                 end
             end
 
-            def do_transition(searchUrl, transitionId, transition)
-
-                action = "released"
-                if transition.downcase == "deploy"
-                    action = "deployed on production"
-                end
+            def do_transition(searchUrl, transitionId)
 
                 uri = "#{searchUrl}/transitions"
                 uri = URI(uri)
                 post = {
-                    "update" => 
-                        {"comment" => [
-                            {
-                                "add" => {
-                                    "body" => "This is #{action} in #{@release_version}, setting status to #{transition.upcase} by Bamboo"
-                                }
-                            }
-                        ]},
                     "transition" => {
                         "id" => transitionId
                     }
                 }
-                #puts post.to_json
 
                 r = Resources::Request.new(uri, @user, @pwd)
                 req = r.create_post_request_header(post.to_json)
